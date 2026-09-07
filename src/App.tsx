@@ -1,122 +1,123 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { Login } from './components/auth/Login';
+import type { RegistroAsistencia } from './types/asistencia';
+import { AsistenciaForm } from './components/asistencia/AsistenciaForm';
+import { AsistenciaTable } from './components/asistencia/AsistenciaTable';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState<string | null>(null);
+  const [seccionActiva, setSeccionActiva] = useState<'asistencia' | 'cursos' | 'parqueo'>('asistencia');
+  const [registrosAsistencia, setRegistrosAsistencia] = useState<RegistroAsistencia[]>([]);
+
+  const handleCerrarSesion = () => {
+    setUsuarioAutenticado(null);
+  };
+
+  const agregarRegistroAsistencia = (nuevo: RegistroAsistencia) => {
+    setRegistrosAsistencia([nuevo, ...registrosAsistencia]);
+  };
+
+  // Si no está autenticado, muestra el login con tema oscuro y acentos institucionales
+  if (!usuarioAutenticado) {
+    return <Login onLoginExitoso={(nombre) => setUsuarioAutenticado(nombre)} />;
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div style={{ minHeight: '100vh', background: '#0f172a', color: '#f8fafc', fontFamily: 'Arial, sans-serif' }}>
+      
+      {/* Barra de Navegación Superior con Tema Oscuro y acentos institucionales */}
+      <header style={{ background: '#1e293b', borderBottom: '3px solid #38bdf8', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <h2 style={{ margin: 0, color: '#38bdf8', fontSize: '20px' }}>Colegio Valle del Saber</h2>
+          <span style={{ background: '#eab308', color: '#0f172a', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>VDS Admin</span>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <span style={{ color: '#94a3b8', fontSize: '14px' }}>👤 <b>{usuarioAutenticado}</b></span>
+          <button 
+            onClick={handleCerrarSesion}
+            style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+            Cerrar Sesión
+          </button>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+      </header>
+
+      {/* Menú de Módulos (Navegación Interna) */}
+      <nav style={{ background: '#111827', padding: '12px 30px', display: 'flex', gap: '15px', borderBottom: '1px solid #334155' }}>
+        <button 
+          onClick={() => setSeccionActiva('asistencia')}
+          style={{ 
+            background: seccionActiva === 'asistencia' ? '#22c55e' : 'transparent', 
+            color: seccionActiva === 'asistencia' ? '#fff' : '#94a3b8', 
+            border: 'none', 
+            padding: '8px 16px', 
+            borderRadius: '6px', 
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
         >
-          Count is {count}
+          📊 Control de Asistencia
         </button>
-      </section>
 
-      <div className="ticks"></div>
+        <button 
+          onClick={() => setSeccionActiva('cursos')}
+          style={{ 
+            background: seccionActiva === 'cursos' ? '#22c55e' : 'transparent', 
+            color: seccionActiva === 'cursos' ? '#fff' : '#94a3b8', 
+            border: 'none', 
+            padding: '8px 16px', 
+            borderRadius: '6px', 
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          📅 Asignación de Cursos y Horarios
+        </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <button 
+          onClick={() => setSeccionActiva('parqueo')}
+          style={{ 
+            background: seccionActiva === 'parqueo' ? '#22c55e' : 'transparent', 
+            color: seccionActiva === 'parqueo' ? '#fff' : '#94a3b8', 
+            border: 'none', 
+            padding: '8px 16px', 
+            borderRadius: '6px', 
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          🚗 Control de Parqueo
+        </button>
+      </nav>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Contenido Principal según la Sección Activa */}
+      <main style={{ maxWidth: '1100px', margin: '30px auto', padding: '0 20px' }}>
+        {seccionActiva === 'asistencia' && (
+          <div>
+            <h2 style={{ color: '#eab308', marginBottom: '20px' }}>Módulo de Seguimiento de Asistencia Inteligente</h2>
+            <AsistenciaForm onAgregarRegistro={agregarRegistroAsistencia} />
+            <AsistenciaTable registros={registrosAsistencia} />
+          </div>
+        )}
+
+        {seccionActiva === 'cursos' && (
+          <div style={{ background: '#1e293b', padding: '40px', borderRadius: '10px', textAlign: 'center', border: '1px solid #334155' }}>
+            <h3 style={{ color: '#38bdf8' }}>Módulo de Asignación de Cursos y Horarios</h3>
+            <p style={{ color: '#94a3b8' }}>Este módulo está listo para desarrollarse a continuación con la configuración de lunes a viernes.</p>
+          </div>
+        )}
+
+        {seccionActiva === 'parqueo' && (
+          <div style={{ background: '#1e293b', padding: '40px', borderRadius: '10px', textAlign: 'center', border: '1px solid #334155' }}>
+            <h3 style={{ color: '#38bdf8' }}>Módulo de Control de Parqueo</h3>
+            <p style={{ color: '#94a3b8' }}>Este módulo estará conectado próximamente para la gestión de espacios.</p>
+          </div>
+        )}
+      </main>
+
+    </div>
+  );
 }
 
-export default App
+export default App;
