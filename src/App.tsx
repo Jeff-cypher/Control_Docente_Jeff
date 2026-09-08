@@ -1,41 +1,65 @@
 import { useState } from 'react';
+import type { RegistroAsistencia, UsuarioSistema } from './types/asistencia';
 import { Login } from './components/auth/Login';
-import type { RegistroAsistencia } from './types/asistencia';
 import { AsistenciaForm } from './components/asistencia/AsistenciaForm';
 import { AsistenciaTable } from './components/asistencia/AsistenciaTable';
+import { UsuarioForm } from './components/usuarios/UsuarioForm';
 
-function App() {
+export default function App() {
   const [usuarioAutenticado, setUsuarioAutenticado] = useState<string | null>(null);
-  const [seccionActiva, setSeccionActiva] = useState<'asistencia' | 'cursos' | 'parqueo'>('asistencia');
-  const [registrosAsistencia, setRegistrosAsistencia] = useState<RegistroAsistencia[]>([]);
+  const [vistaActual, setVistaActual] = useState<'asistencia' | 'usuarios' | 'horarios' | 'parqueo'>('asistencia');
 
-  const handleCerrarSesion = () => {
-    setUsuarioAutenticado(null);
+  // Estado con un usuario por defecto de prueba
+  const [usuarios, setUsuarios] = useState<UsuarioSistema[]>([
+    {
+      id: '1',
+      nombre: 'Jeff',
+      apellidos: 'Barillas',
+      email: 'jeff.barillas@valledelsaber.edu.gt',
+      telefono: '5555-5555',
+      usuario: 'jeff',
+      clave: '1234',
+      roles: ['Docente', 'Administracion'],
+      qrCode: 'VDS-USER-jeff-001'
+    }
+  ]);
+
+  const [registros, setRegistros] = useState<RegistroAsistencia[]>([
+    {
+      id: '1',
+      nombreDocente: 'Jeff Barillas',
+      rol: 'Docente',
+      fecha: '2026-09-07',
+      horaEntrada: '06:45 AM',
+      estado: 'Presente',
+      observaciones: 'Ingreso puntual dentro del establecimiento'
+    }
+  ]);
+
+  const handleAgregarUsuario = (nuevoUsuario: UsuarioSistema) => {
+    setUsuarios(prev => [nuevoUsuario, ...prev]);
   };
 
-  const agregarRegistroAsistencia = (nuevo: RegistroAsistencia) => {
-    setRegistrosAsistencia([nuevo, ...registrosAsistencia]);
+  const handleAgregarRegistro = (nuevoRegistro: RegistroAsistencia) => {
+    setRegistros(prev => [nuevoRegistro, ...prev]);
   };
 
-  // Si no está autenticado, muestra el login con tema oscuro y acentos institucionales
   if (!usuarioAutenticado) {
-    return <Login onLoginExitoso={(nombre) => setUsuarioAutenticado(nombre)} />;
+    return <Login onLoginExitoso={setUsuarioAutenticado} />;
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0f172a', color: '#f8fafc', fontFamily: 'Arial, sans-serif' }}>
-      
-      {/* Barra de Navegación Superior con Tema Oscuro y acentos institucionales */}
-      <header style={{ background: '#1e293b', borderBottom: '3px solid #38bdf8', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ minHeight: '100vh', background: '#0f172a', color: '#fff', fontFamily: 'sans-serif' }}>
+      {/* Header institucional */}
+      <header style={{ background: '#1e293b', borderBottom: '1px solid #334155', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <h2 style={{ margin: 0, color: '#38bdf8', fontSize: '20px' }}>Colegio Valle del Saber</h2>
-          <span style={{ background: '#eab308', color: '#0f172a', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>VDS Admin</span>
+          <h2 style={{ margin: 0, color: '#38bdf8', fontSize: '18px' }}>Colegio Valle del Saber</h2>
+          <span style={{ background: '#eab308', color: '#000', padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>VDS Admin</span>
         </div>
-        
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ color: '#94a3b8', fontSize: '14px' }}>👤 <b>{usuarioAutenticado}</b></span>
+          <span style={{ fontSize: '14px', color: '#94a3b8' }}>👤 {usuarioAutenticado}</span>
           <button 
-            onClick={handleCerrarSesion}
+            onClick={() => setUsuarioAutenticado(null)} 
             style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
           >
             Cerrar Sesión
@@ -43,81 +67,63 @@ function App() {
         </div>
       </header>
 
-      {/* Menú de Módulos (Navegación Interna) */}
-      <nav style={{ background: '#111827', padding: '12px 30px', display: 'flex', gap: '15px', borderBottom: '1px solid #334155' }}>
+      {/* Navegación de Módulos */}
+      <nav style={{ background: '#1e293b', padding: '0 30px', display: 'flex', gap: '30px', borderBottom: '1px solid #334155' }}>
         <button 
-          onClick={() => setSeccionActiva('asistencia')}
-          style={{ 
-            background: seccionActiva === 'asistencia' ? '#22c55e' : 'transparent', 
-            color: seccionActiva === 'asistencia' ? '#fff' : '#94a3b8', 
-            border: 'none', 
-            padding: '8px 16px', 
-            borderRadius: '6px', 
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
+          onClick={() => setVistaActual('asistencia')}
+          style={{ background: 'transparent', border: 'none', color: vistaActual === 'asistencia' ? '#22c55e' : '#94a3b8', padding: '15px 0', borderBottom: vistaActual === 'asistencia' ? '2px solid #22c55e' : 'none', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          📊 Control de Asistencia
+          Control de Asistencia
         </button>
-
         <button 
-          onClick={() => setSeccionActiva('cursos')}
-          style={{ 
-            background: seccionActiva === 'cursos' ? '#22c55e' : 'transparent', 
-            color: seccionActiva === 'cursos' ? '#fff' : '#94a3b8', 
-            border: 'none', 
-            padding: '8px 16px', 
-            borderRadius: '6px', 
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
+          onClick={() => setVistaActual('usuarios')}
+          style={{ background: 'transparent', border: 'none', color: vistaActual === 'usuarios' ? '#38bdf8' : '#94a3b8', padding: '15px 0', borderBottom: vistaActual === 'usuarios' ? '2px solid #38bdf8' : 'none', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          📅 Asignación de Cursos y Horarios
+          Registro y Módulos de Personal
         </button>
-
         <button 
-          onClick={() => setSeccionActiva('parqueo')}
-          style={{ 
-            background: seccionActiva === 'parqueo' ? '#22c55e' : 'transparent', 
-            color: seccionActiva === 'parqueo' ? '#fff' : '#94a3b8', 
-            border: 'none', 
-            padding: '8px 16px', 
-            borderRadius: '6px', 
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
+          onClick={() => setVistaActual('horarios')}
+          style={{ background: 'transparent', border: 'none', color: vistaActual === 'horarios' ? '#38bdf8' : '#94a3b8', padding: '15px 0', borderBottom: vistaActual === 'horarios' ? '2px solid #38bdf8' : 'none', cursor: 'pointer' }}
         >
-          🚗 Control de Parqueo
+          Asignación de Cursos y Horarios
+        </button>
+        <button 
+          onClick={() => setVistaActual('parqueo')}
+          style={{ background: 'transparent', border: 'none', color: vistaActual === 'parqueo' ? '#38bdf8' : '#94a3b8', padding: '15px 0', borderBottom: vistaActual === 'parqueo' ? '2px solid #38bdf8' : 'none', cursor: 'pointer' }}
+        >
+          Control de Parqueo
         </button>
       </nav>
 
-      {/* Contenido Principal según la Sección Activa */}
-      <main style={{ maxWidth: '1100px', margin: '30px auto', padding: '0 20px' }}>
-        {seccionActiva === 'asistencia' && (
-          <div>
-            <h2 style={{ color: '#eab308', marginBottom: '20px' }}>Módulo de Seguimiento de Asistencia Inteligente</h2>
-            <AsistenciaForm onAgregarRegistro={agregarRegistroAsistencia} />
-            <AsistenciaTable registros={registrosAsistencia} />
+      {/* Contenido Principal ampliado al 100% */}
+      <main style={{ padding: '30px 40px', width: '100%', boxSizing: 'border-box' }}>
+        <h1 style={{ textAlign: 'center', color: '#e2e8f0', fontSize: '22px', marginBottom: '25px' }}>
+          Módulo de Seguimiento de Asistencia Inteligente VDS
+        </h1>
+
+        {vistaActual === 'asistencia' && (
+          <>
+            <AsistenciaForm usuarios={usuarios} onAgregarRegistro={handleAgregarRegistro} />
+            <AsistenciaTable registros={registros} />
+          </>
+        )}
+
+        {vistaActual === 'usuarios' && (
+          <UsuarioForm onAgregarUsuario={handleAgregarUsuario} />
+        )}
+
+        {vistaActual === 'horarios' && (
+          <div style={{ background: '#1e293b', padding: '30px', borderRadius: '10px', textAlign: 'center', color: '#94a3b8' }}>
+            <h3>Módulo de Asignación de Cursos y Horarios en desarrollo</h3>
           </div>
         )}
 
-        {seccionActiva === 'cursos' && (
-          <div style={{ background: '#1e293b', padding: '40px', borderRadius: '10px', textAlign: 'center', border: '1px solid #334155' }}>
-            <h3 style={{ color: '#38bdf8' }}>Módulo de Asignación de Cursos y Horarios</h3>
-            <p style={{ color: '#94a3b8' }}>Este módulo está listo para desarrollarse a continuación con la configuración de lunes a viernes.</p>
-          </div>
-        )}
-
-        {seccionActiva === 'parqueo' && (
-          <div style={{ background: '#1e293b', padding: '40px', borderRadius: '10px', textAlign: 'center', border: '1px solid #334155' }}>
-            <h3 style={{ color: '#38bdf8' }}>Módulo de Control de Parqueo</h3>
-            <p style={{ color: '#94a3b8' }}>Este módulo estará conectado próximamente para la gestión de espacios.</p>
+        {vistaActual === 'parqueo' && (
+          <div style={{ background: '#1e293b', padding: '30px', borderRadius: '10px', textAlign: 'center', color: '#94a3b8' }}>
+            <h3>Módulo de Control de Parqueo en desarrollo</h3>
           </div>
         )}
       </main>
-
     </div>
   );
 }
-
-export default App;

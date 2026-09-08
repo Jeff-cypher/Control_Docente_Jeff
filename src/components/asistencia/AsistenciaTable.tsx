@@ -33,7 +33,7 @@ export const AsistenciaTable: React.FC<AsistenciaTableProps> = ({ registros }) =
       </div>
 
       <div style={{ background: '#1e293b', padding: '20px', borderRadius: '10px', border: '1px solid #334155' }}>
-        <h3 style={{ color: '#38bdf8', marginTop: 0, marginBottom: '15px' }}>📋 Historial de Asistencia Docente</h3>
+        <h3 style={{ color: '#38bdf8', marginTop: 0, marginBottom: '15px' }}>📋 Historial de Asistencia Docente y Personal</h3>
         {registros.length === 0 ? (
           <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No hay registros de asistencia guardados todavía.</p>
         ) : (
@@ -41,10 +41,10 @@ export const AsistenciaTable: React.FC<AsistenciaTableProps> = ({ registros }) =
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: '#fff' }}>
               <thead>
                 <tr style={{ background: '#0f172a', borderBottom: '2px solid #334155' }}>
-                  <th style={{ padding: '12px' }}>Docente</th>
-                  <th style={{ padding: '12px' }}>Curso</th>
+                  <th style={{ padding: '12px' }}>Personal</th>
+                  <th style={{ padding: '12px' }}>Rol(es)</th>
                   <th style={{ padding: '12px' }}>Fecha</th>
-                  <th style={{ padding: '12px' }}>Hora</th>
+                  <th style={{ padding: '12px' }}>Hora Entrada</th>
                   <th style={{ padding: '12px' }}>Estado</th>
                   <th style={{ padding: '12px' }}>Observaciones</th>
                 </tr>
@@ -53,7 +53,7 @@ export const AsistenciaTable: React.FC<AsistenciaTableProps> = ({ registros }) =
                 {registros.map((reg) => (
                   <tr key={reg.id} style={{ borderBottom: '1px solid #334155' }}>
                     <td style={{ padding: '12px' }}>{reg.nombreDocente}</td>
-                    <td style={{ padding: '12px' }}>{reg.curso}</td>
+                    <td style={{ padding: '12px', color: '#38bdf8' }}>{reg.rol || 'Docente'}</td>
                     <td style={{ padding: '12px', color: '#94a3b8' }}>{reg.fecha}</td>
                     <td style={{ padding: '12px', color: '#94a3b8' }}>{reg.horaEntrada}</td>
                     <td style={{ padding: '12px' }}>
