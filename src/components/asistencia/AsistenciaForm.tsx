@@ -73,7 +73,7 @@ export const AsistenciaForm: React.FC<AsistenciaFormProps> = ({ usuarios, onAgre
         setClaveInput('');
         setObservaciones('');
       },
-      (error) => {
+      () => {
         setVerificandoUbicacion(false);
         alert('No se pudo verificar tu ubicación GPS. Asegúrate de estar dentro del establecimiento y permitir el acceso a la ubicación.');
       },
