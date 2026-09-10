@@ -2,16 +2,18 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vds.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Control Docente - Valle del Saber</title>
+    
+    {/* Script opcional para reescribir rutas de SPA si usaras React Router en el futuro */}
     <script type="text/javascript">
-      // Redirección para SPA en GitHub Pages
       var segmentCount = 0;
       var l = window.location;
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
         l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
-        l.pathname.slice(1).split('/').slice(segmentCount).join('/') +
+        l.pathname.split('/').slice(1 + segmentCount).join('/') +
         (l.search ? '&' + l.search.slice(1) : '') +
         l.hash
       );
@@ -19,6 +21,5 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
